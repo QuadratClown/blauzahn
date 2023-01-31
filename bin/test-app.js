@@ -3,7 +3,7 @@ const {
   UartBluetoothClient,
 } = require("../lib/uart/index");
 
-const DEFAULT_SERVER_NAME = "SORRIR-Gatt-Server";
+const DEFAULT_SERVER_NAME = "blauzahn-server";
 
 let stop = async () => {};
 

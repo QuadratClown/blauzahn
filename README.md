@@ -1,10 +1,10 @@
-# @sorrir/bluetooth
+# blauzahn
 
-`@sorrir/bluetooth` is a BLE library built upon `bluez`, the official Linux Bluetooth protocol stack. It offers several layers of abstraction, allowing both implementing a central module as well as a custom peripheral.
+`blauzahn`, formerly known as `@sorrir/bluetooth`, is a BLE library built upon `bluez`, the official Linux Bluetooth protocol stack. It offers several layers of abstraction, allowing both implementing a central module as well as a custom peripheral.
 
-In its core, `@sorrir/bluetooth` is a full wrapper around `bluez` and tries to closely resemble the original structure. On the lowest level, `bluez` interfaces can be interacted with directly. This for instance allows a straightforward translation of code snippets or [examples from the bluez repository](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/test) that were originally written in other languages. It additionally packs a ready-made implementation of simple, text based device communication via Bluetooth's Generic Attribute Profile (GATT).
+In its core, `blauzahn` is a full wrapper around `bluez` and tries to closely resemble the original structure. On the lowest level, `bluez` interfaces can be interacted with directly. This for instance allows a straightforward translation of code snippets or [examples from the bluez repository](https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/test) that were originally written in other languages. It additionally packs a ready-made implementation of simple, text based device communication via Bluetooth's Generic Attribute Profile (GATT).
 
-`@sorrir/bluetooth` has full TypeScript support. All necessary types come bundled with the package.
+`blauzahn` has full TypeScript support. All necessary types come bundled with the package.
 
 ## Prerequisites
 
@@ -14,16 +14,16 @@ First, make sure which version of `bluez` you have installed:
 ```console
 bluetoothd -v
 ```
-`@sorrir/bluetooth` has been tested with `bluez 5.50` or newer. It might work on older versions as well, but if you run into problems, make sure to update `bluez` first.
+`blauzahn` has been tested with `bluez 5.50` or newer. It might work on older versions as well, but if you run into problems, make sure to update `bluez` first.
 
 Afterwards you can install the package from npm
 ```console
-npm install @sorrir/bluetooth
+npm install blauzahn
 ```
-The next step is optional, however it is **strongly** recommended. By default, `@sorrir/bluetooth` can only communicate with `bluez` as a root user. To avoid this, create the file `/etc/dbus-1/system.d/sorrir-bluetooth.conf` with the following content:
+The next step is optional, however it is **strongly** recommended. By default, `blauzahn` can only communicate with `bluez` as a root user. To avoid this, create the file `/etc/dbus-1/system.d/blauzahn.conf` with the following content:
 ```xml
 <!-- This configuration file specifies the required security policies
-     for the @sorrir/bluetooth npm package to work. -->
+     for the blauzahn npm package to work. -->
 
 <!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
@@ -50,7 +50,7 @@ Make sure to replace `<YOUR_USER>` with your user name. Note that the above conf
 
 ### Compatibility
 
-`@sorrir/bluetooth` itself is written in pure TypeScript that was transpiled to `ES5` and should therefore not cause any compatibility issues. However it uses `dbus-next` to communicate with `bluez`, which might limit the compatibility to certain architectures or node versions. For more info, visit the [dbus-next npm package](https://www.npmjs.com/package/dbus-next).
+`blauzahn` itself is written in pure TypeScript that was transpiled to `ES5` and should therefore not cause any compatibility issues. However it uses `dbus-next` to communicate with `bluez`, which might limit the compatibility to certain architectures or node versions. For more info, visit the [dbus-next npm package](https://www.npmjs.com/package/dbus-next).
 
 ### TypeScript
 
@@ -60,14 +60,14 @@ While it is possible to use the package with plain JavaScript, it is recommended
 
 ### Package structure
 
-`@sorrir/bluetooth` in its current state contains two main parts: `core` and `uart`, offering different levels of abstraction. Both are included if you import the package as a whole, for example with
+`blauzahn` in its current state contains two main parts: `core` and `uart`, offering different levels of abstraction. Both are included if you import the package as a whole, for example with
 ```ts
-import * as sb from '@sorrir/bluetooth'
+import * as blauzahn from 'blauzahn'
 ```
 If you want to import the parts separately, you can do so for example with
 ```ts
-import * as sbCore from '@sorrir/bluetooth/lib/core/index'
-import * as sbUart from '@sorrir/bluetooth/lib/uart/index'
+import * as core from 'blauzahn/lib/core/index'
+import * as uart from 'blauzahn/lib/uart/index'
 ```
 Generally, every subfolder that is intended to be imported has an `index.js` file, which can be used to split imports into separate statements if desired.
 
@@ -92,19 +92,19 @@ Import required classes:
 
 ```js
 // 
-const { UartBluetoothServer, UartBluetoothClient } = require('@sorrir/bluetooth')
+const { UartBluetoothServer, UartBluetoothClient } = require('blauzahn')
 ```
 
 or
 
 ```ts
-import { UartBluetoothServer, UartBluetoothClient } from '@sorrir/bluetooth'
+import { UartBluetoothServer, UartBluetoothClient } from 'blauzahn'
 ```
 
 Start server:
 
 ```js
-const server = new UartBluetoothServer('SORRIR-Gatt-Server')
+const server = new UartBluetoothServer('blauzahn-server')
 server.handleMessage = (message, sender) => {
     console.log(
         `received: ${JSON.stringify(
@@ -116,7 +116,7 @@ await server.start()
 
 Connect to server:
 ```js
-const client = new UartBluetoothClient('SORRIR-Gatt-Server')
+const client = new UartBluetoothClient('blauzahn-server')
 client.handleMessage = (message, sender) => {
     console.log(
         `received: ${JSON.stringify(
@@ -175,12 +175,12 @@ await adapter.setDiscoveryFilter({ 'Transport': new Variant('s', 'le') })
 
 // find target device by name, connect to it
 // and wait until the connection is established
-let device = await adapter.getDeviceByName('SORRIR-Gatt-Server')
+let device = await adapter.getDeviceByName('blauzahn-server')
 await device.connect()
 await device.Connected.waitForValue(true)
 
 // get service by its UUID
-// the given UUID is the one of the UART-service used
+// the given UUID is the one of the Nordic UART-service used
 // in the UartBluetoothServer
 await device.ServicesResolved.waitForValue(true)
 let service = await device.getService(
@@ -211,7 +211,7 @@ let advertisingManager = await adapter.getAdvertisingManager()
 let gattManager = await adapter.getGattManager()
 
 // create and register advertisement
-let advertisement = new UartAdvertisement(bluez, 'SORRIR-Gatt-Server', 0)
+let advertisement = new UartAdvertisement(bluez, 'blauzahn-server', 0)
 await advertisingManager.registerAdvertisement(advertisement.path, {})
 
 // create and register application
@@ -327,7 +327,7 @@ class UartAdvertisement extends BaseHostInterface {
     constructor(bluez: Bluez, name: string, index: uint16 = 0) {
         super(bluez,
             // interface path
-            `/org/bluez/sorrir/advertisement${index}`,
+            `/org/bluez/blauzahn/advertisement${index}`,
             // interface name
             `org.bluez.LEAdvertisement1`,
             // these are a list of properties of the interface

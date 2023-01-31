@@ -28,7 +28,7 @@ export class HostGattService extends BaseHostInterface {
   constructor(bluez: Bluez, uuid: string, primary: boolean, index: uint16 = 0) {
     super(
       bluez,
-      `/org/bluez/sorrir/service${index}`,
+      `/org/bluez/blauzahn/service${index}`,
       `org.bluez.GattService1`,
       {
         UUID: { signature: "s", value: uuid },

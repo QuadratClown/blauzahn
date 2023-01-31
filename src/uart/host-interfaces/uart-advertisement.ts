@@ -22,7 +22,7 @@ export class UartAdvertisement extends BaseHostInterface {
   constructor(bluez: Bluez, name: string, index: uint16 = 0) {
     super(
       bluez,
-      `/org/bluez/sorrir/advertisement${index}`,
+      `/org/bluez/blauzahn/advertisement${index}`,
       `org.bluez.LEAdvertisement1`,
       {
         LocalName: new Variant("s", name),
